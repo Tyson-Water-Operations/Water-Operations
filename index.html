@@ -33,7 +33,6 @@ body {
   padding-right: 6px;
 }
 
-
 /* =========================
    HEADER / LAYOUT
 ========================= */
@@ -41,10 +40,10 @@ body {
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 }
 
-.title { font-size: 22px; font-weight: 750; line-height: 1.2; }
+.title { font-size: 20px; font-weight: 750; line-height: 1.2; }
 .location { font-size: 16px; font-weight: 700; }
 
 /* =========================
@@ -53,6 +52,7 @@ body {
 
 .dashboardSiteSelect {
   margin-top: 6px;
+  font-size: 14px;
 }
 
 .dashboardSiteSelect select {
@@ -61,8 +61,10 @@ body {
   border: 2px solid #111827;
   font-weight: 700;
   background: #fff;
+  font-size: 14px;
+  height: 34px;              /* 👈 match buttons */
+  box-sizing: border-box;    /* 👈 keeps sizing clean */
 }
-
 /* =========================
    BUTTONS
 ========================= */
@@ -70,8 +72,9 @@ body {
 
 .headerBtns {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
+  margin-left: 10px
 }
 
 .clearBtn,
@@ -82,11 +85,12 @@ body {
 }
 
 .clearBtn {
-  font-size: 11px;
+  font-size: 14px;
   padding: 6px 10px;
-  background: #111827;
-  color: #fff;
+  background: #fff;
+  color: #000;
   font-weight: 700;
+  height: 34px;
 }
 
 .menuBtn {
@@ -323,10 +327,12 @@ body {
   <div class="header">
     <div>
 <div class="title">
-  Operational Monitoring
+  WTP Digital Logsheet
 </div>
-      <div class="dashboardSiteSelect">
-        <select id="siteToggle" onchange="switchSite()">
+
+    <div class="dashboardSiteSelect">
+  <select id="siteToggle" onchange="switchSite()">
+          
           <option>Burketown</option>
           <option>Gregory</option>
         </select>
@@ -334,10 +340,10 @@ body {
       <div class="location" id="location"></div>
     </div>
 
-    <div class="headerBtns">
-      <button class="clearBtn" onclick="clearData()">Clear<br>Data</button>
-      <button class="menuBtn" onclick="openMenu()">&#9776;</button>
-    </div>
+  <div class="headerBtns">
+    <button class="clearBtn" onclick="clearData()">Clear</button>
+    <button class="menuBtn" onclick="openMenu()">&#9776;</button>
+   </div>
   </div>
 
  <div class="scrollArea">
@@ -351,7 +357,6 @@ body {
   <div class="footer" id="footer"></div>
 
 </div>
-
 
 <!-- =========================
      PLACARD MODAL
