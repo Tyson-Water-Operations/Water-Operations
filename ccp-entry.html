@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body {
+  font-family: system-ui;
+  background: #f4f8fb;
+  margin: 0;
+}
+
+.phone {
+  max-width: 420px;
+  margin: auto;
+  padding: 16px;
+}
+
+h2 { margin-bottom: 12px; }
+
+.block {
+  background: #fff;
+  border: 2px solid #111827;
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.label {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+input,
+select.entrySelect {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+input:disabled,
+select.entrySelect:disabled {
+  background: #f3f4f6;
+}
+
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #cbd5e1;
+}
+
+.green { background: #22c55e; }
+.amber { background: #f59e0b; }
+.red   { background: #ef4444; }
+.gray  { background: #cbd5e1; }
+
+.okBtn {
+  padding: 10px 12px;
+  border: 2px solid #111827;
+  border-radius: 10px;
+  background: #fff;
+  font-weight: 600;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 12px;
+  background: #111827;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.box {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.box input,
+.box select {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="phone">
+
+  <h2 id="title"></h2>
+
+  <div id="fields"></div>
+
+  <button class="submitBtn" onclick="submit()">Submit</button>
+
+</div>
+
+<!-- OPERATOR MODAL -->
+<div class="modal" id="modal">
+  <div class="box">
+    <h3>Operator</h3>
+    <input id="op">
+
+    <h3>Location</h3>
+    <select id="loc">
+      <option>Burketown</option>
+      <option>Gregory</option>
+    </select>
+
+    <button onclick="setOperator()">OK</button>
+  </div>
+</div>
+
+<script>
+
+/* =========================
+   SITE HELPERS
+========================= */
+
+function getActiveSite() {
+  return sessionStorage.getItem('location') || 'Burketown';
+}
+
+/* =========================
+   CONFIG
+========================= */
+
+const CONFIG = {
+
+  ccp1: [
+    { id: 'turbidity', label: 'Turbidity', type: 'number' },
+    { id: 'ph', label: 'pH', type: 'number' },
+
+    { id: 'turbidity_online', label: 'Turbidity', type: 'number' }
+  ],
+
+  ccp2: [
+    { id: 'turbidity', label: 'Turbidity', type: 'number' },
+    { id: 'ph', label: 'pH', type: 'number' },
+
+    { id: 'turbidity_online', label: 'Turbidity', type: 'number' },
+    { id: 'ph_online', label: 'pH', type: 'number' }
+  ],
+
+  ccp3: [
+    { id: 'turbidity', label: 'Turbidity', type: 'number' },
+    { id: 'ph', label: 'pH', type: 'number' },
+    { id: 'chlorine', label: 'Chlorine', type: 'number' },
+    { id: 'uv', label: 'UV', type: 'number' },
+
+    { id: 'turbidity_online', label: 'Turbidity', type: 'number' },
+    { id: 'ph_online', label: 'pH', type: 'number' },
+    { id: 'chlorine_online', label: 'Chlorine', type: 'number' },
+    { id: 'uv_online', label: 'UV', type: 'number' }
+  ],
+
+  ccp4: [
+    { id: 'turbidity', label: 'Turbidity', type: 'number' },
+    { id: 'ph', label: 'pH', type: 'number' },
+    { id: 'chlorine', label: 'Chlorine', type: 'number' },
+
+    { id: 'turbidity_online', label: 'Turbidity', type: 'number' },
+    { id: 'ph_online', label: 'pH', type: 'number' },
+    { id: 'chlorine_online', label: 'Chlorine', type: 'number' }
+  ],
+
+  ccp5: [
+    { id: 'integrity', label: 'Integrity Breach?', type: 'select', options: ['No', 'Yes'] }
+  ]
+
+};
+
+const TITLES = {
+  ccp1: 'CCP 1 - Raw Water',
+  ccp2: 'CCP 2 - Settled / Clarified Water',
+  ccp3: 'CCP 3 - Filtered Water / Disinfection',
+  ccp4: 'CCP 4 - Town Water / Reservoir',
+  ccp5: 'CCP 5 - Reservoir Integrity'
+};
+
+/* =========================
+   RULES
+========================= */
+
+function turbidity(v){
+  if (v >= 1.0) return 'red';
+  if (v > 0.5) return 'amber';
+  return 'green';
+}
+
+function chlorine(v){
+  if (v < 0.5 || v > 4.0) return 'red';
+  if (v < 1.0 || v > 1.5) return 'amber';
+  return 'green';
+}
+
+function ph(v){
+  if (v < 6.5 || v > 8.5) return 'red';
+  if (v > 8.3) return 'amber';
+  return 'green';
+}
+
+function uv(v) {
+  return v ? 'green' : 'amber';
+}
+
+function integrity(v) {
+  return v === 'Yes' ? 'red' : 'green';
+}
+
+const RULES = { turbidity, chlorine, ph, uv, integrity };
+
+/* =========================
+   INIT / PAGE SETUP
+========================= */
+
+const id = new URLSearchParams(location.search).get('id');
+const fields = CONFIG[id] || [];
+
+if (!CONFIG[id]) {
+  document.getElementById('title').innerText = 'Unknown CCP';
+} else {
+  document.getElementById('title').innerText = TITLES[id] || id.toUpperCase();
+}
+
+let data = JSON.parse(localStorage.getItem('ccpDraftData_' + getActiveSite()) || '{}');
+let locked = false;
+
+
+
+/* =========================
+   RENDER
+========================= */
+
+function render() {
+
+  let benchHTML = '';
+  let onlineHTML = '';
+
+  fields.forEach(f => {
+
+    const val = data[id]?.[f.id + '_value'] || '';
+    const status = data[id]?.[f.id] || '';
+    const control = f.type === 'select'
+      ? renderSelect(f, val)
+      : renderInput(f, val);
+
+    const block = `
+      <div class="block">
+        <div class="label">${f.label}</div>
+        <div class="row">
+          ${control}
+          <div class="dot ${status}" id="dot_${f.id}"></div>
+          ${locked ? '' : `<button class="okBtn" onclick="ok('${f.id}')">OK</button>`}
+        </div>
+      </div>
+    `;
+
+    if (f.id.includes('_online')) {
+      onlineHTML += block;
+    } else {
+      benchHTML += block;
+    }
+
+  });
+
+  let finalHTML = '';
+
+  if (id === 'ccp5') {
+    finalHTML = benchHTML;
+  } else {
+    finalHTML = `
+      <h3>Bench</h3>
+      ${benchHTML}
+
+      <h3 style="margin-top:16px;">Online</h3>
+      ${onlineHTML}
+    `;
+  }
+
+  document.getElementById('fields').innerHTML = finalHTML;
+
+  if (locked) {
+    document.querySelector('.submitBtn').style.display = 'none';
+  }
+}
+
+/* =========================
+   INPUT BUILDERS
+========================= */
+
+function renderInput(f, val) {
+  return `<input id="${f.id}" type="number" value="${val}" ${locked ? 'disabled' : ''}>`;
+}
+
+function renderSelect(f, val) {
+  const options = [''].concat(f.options || []).map(option => {
+    const selected = option === val ? 'selected' : '';
+    const label = option === '' ? 'Select' : option;
+    return `<option value="${option}" ${selected}>${label}</option>`;
+  }).join('');
+
+  return `<select class="entrySelect" id="${f.id}" ${locked ? 'disabled' : ''}>${options}</select>`;
+}
+
+/* =========================
+   ACTIONS
+========================= */
+
+function ok(field) {
+  const rawValue = document.getElementById(field).value;
+  if (rawValue === '') return alert('Enter value');
+
+  const fieldConfig = fields.find(f => f.id === field);
+  const value = fieldConfig?.type === 'select' ? rawValue : Number(rawValue);
+  const baseField = field.replace('_online', '');
+  const status = RULES[baseField] ? RULES[baseField](value) : 'gray';
+
+  if (!data[id]) data[id] = {};
+
+  data[id][field] = status;
+  data[id][field + '_value'] = value;
+
+
+  localStorage.setItem('ccpDraftData_' + getActiveSite(), JSON.stringify(data));
+
+  document.getElementById('dot_' + field).className = 'dot ' + status;
+}
+
+function submit() {
+
+  if (!data[id]) data[id] = {};
+
+  // 🔥 CCP1 (weekly)
+  if (id === 'ccp1') {
+    data[id].operator = sessionStorage.getItem('operator');
+    data[id].location = getActiveSite();
+    data[id].time = new Date().toISOString();
+
+    // force new login for next CCP
+    sessionStorage.removeItem('operator');
+  }
+
+  // 🔥 CCP2–5 (daily)
+  else {
+    data[id].operator = sessionStorage.getItem('operator');
+    data[id].location = getActiveSite();
+    data[id].time = new Date().toISOString();
+  }
+
+  localStorage.setItem('ccpDraftData_' + getActiveSite(), JSON.stringify(data));
+
+  location.href = 'dashboard.html';
+}
+
+/* =========================
+   OPERATOR HANDLING
+========================= */
+
+const op = sessionStorage.getItem('operator');
+
+if (!op || op.trim() === '') {
+  document.getElementById('modal').style.display = 'flex';
+}
+
+function setOperator() {
+  const name = document.getElementById('op').value.trim();
+
+  if (!name) {
+    alert('Enter operator name');
+    return;
+  }
+
+  sessionStorage.setItem('operator', name);
+  sessionStorage.setItem('location', document.getElementById('loc').value);
+  document.getElementById('modal').style.display = 'none';
+  location.reload();
+}
+
+/* =========================
+   INIT EXECUTION
+========================= */
+
+render();
+
+</script>
+
+</body>
+</html>

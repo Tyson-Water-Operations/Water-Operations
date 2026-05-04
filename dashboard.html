@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+
+/* =========================
+   GLOBAL STYLES
+========================= */
+
+body {
+  font-family: system-ui;
+  background: #e5e7eb;
+  margin: 0;
+}
+
+.wrapper {
+  max-width: 420px;
+  margin: 20px auto;
+  padding: 16px;
+  background: #dbeafe;
+  border: 2px solid #111827;
+  border-radius: 18px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+/* =========================
+   HEADER / LAYOUT
+========================= */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title { font-size: 22px; font-weight: 750; line-height: 1.2; }
+.location { font-size: 16px; font-weight: 700; }
+
+/* =========================
+   SITE SELECT
+========================= */
+
+.dashboardSiteSelect {
+  margin-top: 6px;
+}
+
+.dashboardSiteSelect select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 2px solid #111827;
+  font-weight: 700;
+  background: #fff;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+
+.headerBtns {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.clearBtn,
+.menuBtn,
+.openBtn {
+  border-radius: 8px;
+  border: 2px solid #111827;
+}
+
+.clearBtn {
+  font-size: 11px;
+  padding: 6px 10px;
+  background: #111827;
+  color: #fff;
+  font-weight: 700;
+}
+
+.menuBtn {
+  padding: 6px 10px;
+  background: #fff;
+  font-size: 14px;
+}
+
+.openBtn {
+  font-size: 11px;
+  padding: 6px 10px;
+  background: #fff;
+}
+
+/* =========================
+   CARDS / DISPLAY
+========================= */
+
+.card {
+  background: #eef6fb;
+  border: 2px solid #111827;
+  border-radius: 16px;
+  padding: 14px;
+  margin-top: 12px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.paramRow {
+  display: flex;
+  gap: 18px;
+  margin-top: 10px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.paramItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* =========================
+   STATUS DOTS
+========================= */
+
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.green { background: #22c55e; }
+.amber { background: #f59e0b; }
+.red   { background: #ef4444; }
+.gray  { background: #cbd5e1; }
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer {
+  margin-top: 20px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #f3f4f6;
+  border: 2px solid #111827;
+  font-weight: 600;
+  white-space: pre-line;
+}
+
+.submitAll {
+  margin-top: 16px;
+  width: 100%;
+  padding: 12px;
+  background: #111827;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+/* =========================
+   MODAL / PLACARDS
+========================= */
+
+/* MODAL */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+
+.menuBox {
+  background: #dbeafe;
+  width: 92%;
+  max-width: 400px;
+  max-height: 88vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px;
+  padding-right: 10px;
+  border-radius: 12px;
+  border: 2px solid #111827;
+  box-sizing: border-box;
+}
+
+.menuBox h3 {
+  margin-top: 0;
+}
+
+.menuBox select {
+  width: 100%;
+  padding: 9px;
+  margin-top: 6px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  border: 1px solid #9ca3af;
+}
+
+.toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.toggle button,
+.closeBtn {
+  padding: 7px;
+  border: 2px solid #111827;
+  background: #eef6fb;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.toggle button.active {
+  background: #dbeafe;
+  border-color: #2563eb;
+}
+
+.closeBtn {
+  width: 100%;
+  margin-top: 12px;
+  background: #111827;
+  color: #fff;
+}
+
+#placard {
+  margin-top: 12px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.section {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.limitGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.limitBox {
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 8px;
+  background: #f9fafb;
+}
+
+/* TARGET */
+.limitBox:has(strong .green) {
+  background: #f0fdf4;
+  border-color: #22c55e;
+}
+
+/* ALERT */
+.limitBox:has(strong .amber) {
+  background: #fff7ed;
+  border-color: #f59e0b;
+}
+
+/* CRITICAL */
+.limitBox:has(strong .red) {
+  background: #fef2f2;
+  border-color: #ef4444;
+}
+
+.menuBox::-webkit-scrollbar {
+  width: 8px;
+}
+
+.menuBox::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+}
+
+.menuBox::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.menuBox::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     MAIN DASHBOARD
+========================= -->
+
+<div class="wrapper">
+
+  <div class="header">
+    <div>
+<div class="title">
+  Operational Monitoring
+</div>
+      <div class="dashboardSiteSelect">
+        <select id="siteToggle" onchange="switchSite()">
+          <option>Burketown</option>
+          <option>Gregory</option>
+        </select>
+      </div>
+      <div class="location" id="location"></div>
+    </div>
+
+    <div class="headerBtns">
+      <button class="clearBtn" onclick="clearData()">Clear<br>Data</button>
+      <button class="menuBtn" onclick="openMenu()">&#9776;</button>
+    </div>
+  </div>
+
+  <div id="list"></div>
+
+  <button class="submitAll" onclick="finalSubmit()" id="submitBtn">
+    SUBMIT ALL CCP DATA
+  </button>
+
+  <div class="footer" id="footer"></div>
+
+</div>
+
+<!-- =========================
+     PLACARD MODAL
+========================= -->
+
+<div class="modal" id="menuModal">
+  <div class="menuBox">
+
+    <h3>CCP Placards</h3>
+
+    <label><strong>Water Supply System</strong></label>
+    <select id="siteSelect" onchange="renderCcpOptions(); renderPlacard();">
+      <option value="burketown">Burketown</option>
+      <option value="gregory">Gregory</option>
+    </select>
+
+    <label><strong>CCP</strong></label>
+    <select id="ccpSelect" onchange="renderPlacard()"></select>
+
+<div class="toggle">
+  <button onclick="showMode('overview')">Overview</button>
+  <button onclick="showMode('routine')">Routine</button>
+  <button onclick="showMode('limits')">Limits</button>
+  <button onclick="showMode('actions')">Actions</button>
+</div>
+
+    <div id="placard"></div>
+
+    <button class="closeBtn" onclick="closeMenu()">Close</button>
+
+  </div>
+</div>
+
+<script>
+
+/* =========================
+   DASHBOARD CONFIG
+========================= */
+
+const CONFIG = {
+  ccp1: { name: 'CCP 1 - Raw Water (Weekly)', fields: ['turbidity', 'ph'] },
+  ccp2: { name: 'CCP 2 - Settled / Clarified Water', fields: ['turbidity', 'ph'] },
+  ccp3: { name: 'CCP 3 - Filtered Water / Disinfection', fields: ['turbidity','ph','chlorine','uv'] },
+  ccp4: { name: 'CCP 4 - Town Water / Reservoir', fields: ['turbidity','ph','chlorine'] },
+  ccp5: { name: 'CCP 5 - Reservoir Integrity', fields: ['integrity'] }
+};
+
+const LABELS = {
+  turbidity: 'Turbidity',
+  ph: 'pH',
+  chlorine: 'Chlorine',
+  uv: 'UV',
+  integrity: 'Integrity Breach'
+};
+
+
+/* =========================
+   SITE VIEW HELPERS
+========================= */
+
+function getSite() {
+  return sessionStorage.getItem('viewSite') ||
+         sessionStorage.getItem('location') ||
+         'Burketown';
+}
+
+function switchSite() {
+  sessionStorage.setItem('viewSite', document.getElementById('siteToggle').value);
+  render();
+}
+
+/* =========================
+   STORAGE HELPERS
+========================= */
+
+function getDraft() {
+  return JSON.parse(localStorage.getItem('ccpDraftData_' + getSite()) || '{}');
+}
+
+function isLocked() {
+  return localStorage.getItem('ccpLocked_' + getSite()) === 'true';
+}
+
+/* =========================
+   RENDER DASHBOARD
+========================= */
+
+function render() {
+  document.getElementById('siteToggle').value = getSite();
+
+  const data = getDraft();
+  let html = '';
+
+  Object.keys(CONFIG).forEach(id => {
+    const cfg = CONFIG[id];
+    const rec = data[id] || {};
+
+    const params = cfg.fields.map(f => {
+      const status = rec[f] || 'gray';
+      return `<div class="paramItem">${LABELS[f]}<div class="dot ${status}"></div></div>`;
+    }).join('');
+
+let extra = '';
+
+if (id === 'ccp1' && rec.operator && rec.time) {
+  extra = `<div style="font-size:11px; opacity:0.7; margin-top:6px;">
+    Submitted by: ${rec.operator} | ${new Date(rec.time).toLocaleString()}
+  </div>`;
+}
+
+html += `
+  <div class="card">
+    <div class="row">
+      <strong>${cfg.name}</strong>
+      <button class="openBtn" onclick="openCCP('${id}')">Open</button>
+    </div>
+    <div class="paramRow">${params}</div>
+    ${extra}
+  </div>`;
+  });
+
+  document.getElementById('list').innerHTML = html;
+  renderFooter(data);
+
+  document.getElementById('submitBtn').style.display = isLocked() ? 'none' : 'block';
+}
+
+
+function renderFooter(data) {
+  let latest = null;
+
+ Object.entries(data).forEach(([key, r]) => {
+
+  // IGNORE CCP1 for footer display
+  if (key === 'ccp1') return;
+
+  if (r.time && (!latest || new Date(r.time) > new Date(latest.time))) {
+    latest = r;
+  }
+
+});
+
+  if (!latest) {
+    document.getElementById('footer').innerText = 'No submissions yet';
+    return;
+  }
+
+  document.getElementById('footer').innerText =
+    `Last Submission\nOperator: ${latest.operator}\nTime: ${new Date(latest.time).toLocaleString()}\nLocation: ${latest.location || '-'}`;
+}
+
+/* =========================
+   DASHBOARD ACTIONS
+========================= */
+
+function finalSubmit() {
+  if (!confirm('Final submit? This will lock all data.')) return;
+
+  const draft = getDraft();
+
+// 🔥 Block submit if incomplete
+const required = ['ccp2','ccp3','ccp4','ccp5'];
+
+const CONFIG = {
+  ccp2: ['turbidity'],
+  ccp3: ['turbidity','ph','chlorine','uv'],
+  ccp4: ['turbidity','chlorine'],
+  ccp5: ['integrity']
+};
+
+const labelMap = {
+  turbidity: 'Turbidity',
+  ph: 'pH',
+  chlorine: 'Chlorine',
+  uv: 'UV',
+  integrity: 'Integrity'
+};
+
+for (let ccp of required) {
+
+   if (!draft[ccp] || Object.keys(draft[ccp]).length === 0) {
+  alert(`${ccp.toUpperCase()} is incomplete`);
+  return;
+}
+
+  for (let field of CONFIG[ccp]) {
+    if (draft[ccp][field + '_value'] === undefined || draft[ccp][field + '_value'] === '') {
+
+
+alert(`${ccp.toUpperCase()} missing ${labelMap[field]}`);
+      return;
+    }
+  }
+
+}
+
+localStorage.setItem('ccpFinalData_' + getSite(), JSON.stringify(draft));
+
+exportCSV();
+
+// 🔥 reset for next daily run
+localStorage.removeItem('ccpLocked_' + getSite());
+sessionStorage.removeItem('operator');
+
+alert('Final submission complete ✔️');
+location.reload();
+}
+
+function openCCP(id) {
+
+  const selectedSite = getSite();
+  const currentLocation = sessionStorage.getItem('location');
+
+  // 🔥 CCP1 = always force new login
+  if (id === 'ccp1') {
+    sessionStorage.removeItem('operator');
+  }
+
+  // 🔥 Other CCPs = only reset if switching sites
+  else if (currentLocation !== selectedSite) {
+    sessionStorage.removeItem('operator');
+  }
+
+  // always set location
+  sessionStorage.setItem('location', selectedSite);
+
+  location.href = './ccp-entry.html?id=' + id;
+}
+
+function clearData() {
+  const site = getSite();
+
+  if (!confirm('Clear DAILY CCP data for ' + site + '? (CCP1 will remain)')) return;
+
+  let data = JSON.parse(localStorage.getItem('ccpDraftData_' + site) || '{}');
+
+ const preserved = {
+  ccp1: data.ccp1 || {}
+};
+
+  localStorage.setItem('ccpDraftData_' + site, JSON.stringify(preserved));
+
+  sessionStorage.removeItem('operator');
+
+  location.reload();
+}
+
+
+/* =========================
+   PLACARD MENU
+========================= */
+
+let mode = 'overview';
+
+function openMenu() {
+  const currentSite = getSite().toLowerCase();
+  if (currentSite.includes('gregory')) document.getElementById('siteSelect').value = 'gregory';
+  if (currentSite.includes('burketown')) document.getElementById('siteSelect').value = 'burketown';
+
+  document.getElementById('menuModal').style.display = 'flex';
+  renderCcpOptions();
+  renderPlacard();
+}
+
+function closeMenu() {
+  document.getElementById('menuModal').style.display = 'none';
+}
+
+function showMode(m) {
+  mode = m;
+
+  // remove active from all buttons
+  document.querySelectorAll('.toggle button').forEach(btn => {
+    btn.classList.remove('active');
+  });
+
+  // add active to clicked button
+  const btn = Array.from(document.querySelectorAll('.toggle button'))
+    .find(b => b.innerText.toLowerCase() === m);
+
+  if (btn) btn.classList.add('active');
+
+  renderPlacard();
+}
+
+function bulletList(items) {
+  return items.map(item => `• ${item}`).join('<br>');
+}
+
+function limitBox(title, content) {
+
+  let dot = '';
+
+  if (title.toUpperCase().includes('TARGET')) {
+    dot = '<span class="dot green"></span> ';
+  }
+
+  if (title.toUpperCase().includes('ALERT')) {
+    dot = '<span class="dot amber"></span> ';
+  }
+
+  if (title.toUpperCase().includes('CRITICAL')) {
+    dot = '<span class="dot red"></span> ';
+  }
+
+  return `<div class="limitBox">
+            <strong>${dot}${title}</strong><br>
+            ${content}
+          </div>`;
+}
+
+const PLACARDS = {
+  burketown: {
+    ccp1: {
+      label: 'BKT CCP1 – Raw Water Intake',
+      overview: `
+        <strong>Process / Control Point</strong><br>Raw water abstraction / Nicholson River
+        <div class="section"><strong>Hazards</strong><br>All pathogens, turbidity</div>
+        <div class="section"><strong>Monitoring</strong><br>Turbidity</div>
+        <div class="section"><strong>Frequency</strong><br>Raw water grab sample 3–5 days/week when WTP operational</div>
+        <div class="section"><strong>Location</strong><br>WTP inlet and/or Nicholson River offtake</div>
+        <div class="section"><strong>Response Trigger</strong><br>Online instrument alarm, turbidity grab sample, or manual cross-check of online instrument</div>
+      `,
+      limits: `<div class="limitGrid">${limitBox('TARGET', '&lt;5 NTU')}${limitBox('ALERT LEVEL', '20 NTU')}${limitBox('CRITICAL LIMIT', '50 NTU')}</div>`,
+      routine: bulletList([
+        'Routine site and operational checks',
+        'Equipment correlation checks against bench meters and WTP PLC records',
+        'Raw water testing for turbidity and pH',
+        'Weekly visual inspections of river offtake'
+      ]),
+      alert: bulletList([
+        'Repeat manual tests to confirm levels',
+        'Visually assess river for increased turbidity and measure manually',
+        'Initiate incident monitoring program in raw water if required',
+        'Notify Water and Sewerage Supervisor (WSS)',
+        'Monitor turbidity post settling and draw-off ponds',
+        'Check coagulant dose rates — jar test and adjust as required',
+        'Monitor and increase chlorine dose at plant if filtered water turbidity is compromised',
+        'Complete Initial Incident Report Form'
+      ]),
+      critical: bulletList([
+        'Isolate and contain source of high turbidity — only pump if essential',
+        'Shut down treatment plant',
+        'Monitor raw water turbidity daily until stable and declining',
+        'WSS to inform Manager / Executive Manager Engineering',
+        'Monitor treatment process closely; jar test and adjust dose rates, slow flow, and monitor coagulation and draw-off pond turbidity',
+        'Maintain appropriate disinfection levels in the network; increase chlorine dose if filtered turbidity is compromised',
+        'Management to consider Incident Plan of Action, including boil water alert if required',
+        'Complete Initial Incident Report Form'
+      ])
+    },
+
+    ccp2: {
+      label: 'BKT CCP2 – Coagulation / Clarification',
+      overview: `
+        <strong>Process / Control Point</strong><br>Water Treatment Plant coagulation and clarification
+        <div class="section"><strong>Hazards</strong><br>Turbidity, pathogens</div>
+        <div class="section"><strong>Monitoring</strong><br>Turbidity</div>
+        <div class="section"><strong>Frequency</strong><br>Continuous online, manual test 3–5 days/week</div>
+        <div class="section"><strong>Location</strong><br>Water Treatment Plant draw-off pond outlet</div>
+        <div class="section"><strong>Response Trigger</strong><br>Increasing filtered water turbidity or low dosed water chlorine</div>
+      `,
+      limits: `<div class="limitGrid">${limitBox('TARGET', '&lt;1 NTU')}${limitBox('ALERT LEVEL', '&gt;2 NTU')}${limitBox('CRITICAL LIMIT', '&gt;5 NTU')}</div>`,
+      routine: bulletList([
+        'Routine site and equipment checks at WTP',
+        'Equipment correlation with bench meters and records stored in water quality database / plant sheets',
+        'Chemical procurement and delivery requirements',
+        'Chemical dosing rate checks and jar tests as required',
+        'Instrument calibration and records maintained'
+      ]),
+      alert: bulletList([
+        'Validate readings with alternative meter where possible',
+        'Check coagulant dosing rates and jar test; adjust dose rate as required',
+        'Check operation of coagulant dosing pump',
+        'Visual check of coagulation zone',
+        'Initiate filter backwash sequence and observe',
+        'Check raw water conditions such as turbidity and pH',
+        'Check river for any signs of contamination',
+        'Increase chlorine dose at plant if needed',
+        'Contact WSS',
+        'Complete initial incident response notification form'
+      ]),
+      critical: bulletList([
+        'Cease pumping from river',
+        'Inform WSS',
+        'Check coagulant dose rate and jar test; adjust dose rate as required',
+        'Jar test settled water and determine if secondary coagulant dosing is required',
+        'Check operation of coagulant dosing pump',
+        'Increase chlorine dose rate if filtered turbidity is compromised',
+        'WSS to contact Manager',
+        'Management to consider Incident Plan of Action, including boil water alert if required',
+        'Complete Water Quality Incident Report Form Part A & B and submit to DNRME',
+        'Seek technical support to identify and rectify fault'
+      ])
+    },
+
+    ccp3: {
+      label: 'BKT CCP3 – Filtration Stage',
+      overview: `
+        <strong>Process / Control Point</strong><br>Water Treatment Plant filtration stage
+        <div class="section"><strong>Hazard</strong><br>Turbidity</div>
+        <div class="section"><strong>Monitoring</strong><br>Turbidity</div>
+        <div class="section"><strong>Frequency</strong><br>Manual test 3–5 days/week</div>
+        <div class="section"><strong>Location</strong><br>Water Treatment Plant filter outlet</div>
+        <div class="section"><strong>Response Trigger</strong><br>Increasing filtered water turbidity</div>
+      `,
+      limits: `<div class="limitGrid">${limitBox('TARGET', '&lt;0.2 NTU')}${limitBox('ALERT LEVEL', '&gt;0.5 NTU')}${limitBox('CRITICAL LIMIT', '&gt;1 NTU')}</div>`,
+      routine: bulletList([
+        'Routine site and equipment checks at WTP',
+        'Equipment correlation with bench meters and records stored in water quality database / plant sheets',
+        'Routine checks of coagulant dose rates and dosing system',
+        'Routine observation of backwash sequences and flow trends',
+        'Chemical procurement and delivery requirements',
+        'Chemical dosing rate checks',
+        'Instrument calibration and records maintained'
+      ]),
+      alert: bulletList([
+        'Validate readings with alternative meter where possible',
+        'Check coagulant dosing rates and residuals; adjust dose rate as required',
+        'Jar test and adjust coagulant dose rate',
+        'Initiate filter backwash sequence and observe',
+        'Check raw water quality conditions such as turbidity and pH',
+        'Check river for any signs of contamination',
+        'Contact WSS and notify Executive Manager Engineering',
+        'Complete initial incident response notification form'
+      ]),
+      critical: bulletList([
+        'Follow Alert Level corrective actions',
+        'Inform WSS',
+        'Take micro-sample if low disinfection levels or nitrification suspected',
+        'Increase chlorine residual rate to ensure residual is maintained to end of reticulation',
+        'Consider reservoir top-up chlorine dosing',
+        'WSC to contact Executive Manager Engineering (EME)',
+        'EME to contact DNRME and Queensland Health',
+        'EME to consider Incident Plan of Action, including boil water alert if required',
+        'Complete Water Quality Incident Report Form Part A & B and submit to DNRME',
+        'Seek technical support to identify and rectify fault if necessary',
+        'Consider scheduling filter inspection to assess media and internal condition of filters'
+      ])
+    },
+
+    ccp3d: {
+      label: 'BKT CCP3 – Disinfection / Post Chlorine',
+      overview: `
+        <strong>Process / Control Point</strong><br>Disinfection — chlorine mg/L and UV
+        <div class="section"><strong>Hazards</strong><br>Chlorine-sensitive pathogens and chemical chlorine hazard</div>
+        <div class="section"><strong>Monitoring</strong><br>Free chlorine residual, pH, NTU and UV</div>
+        <div class="section"><strong>Frequency</strong><br>Continuous online post storage and manual test 3–5 days/week</div>
+        <div class="section"><strong>Location</strong><br>Water Treatment Plant filter outlet</div>
+        <div class="section"><strong>Response Trigger</strong><br>Low or high chlorine residual and/or pH</div>
+      `,
+      limits: `<div class="limitGrid">${limitBox('TARGET', 'Free chlorine: 1.1–1.3 mg/L<br>UV: &gt;15 MW d/m³<br>pH: 7.0<br>NTU: &lt;0.3')}${limitBox('ALERT LEVEL', 'Free chlorine: &lt;1.0 or &gt;1.5 mg/L<br>UV: &lt;15 MW d/m³<br>pH: 8.3<br>NTU: &gt;0.5')}${limitBox('CRITICAL LIMIT', 'Free chlorine: &lt;0.5 or &gt;4.0 mg/L<br>UV: &lt;10 MW d/m³<br>pH: &lt;6.5 or &gt;8.5<br>NTU: &gt;1')}</div>`,
+      routine: bulletList([
+        'Routine site and equipment checks at WTP',
+        'Equipment correlation with bench meters and records stored in water quality database / plant sheets',
+        'Chemical procurement and delivery requirements',
+        'Chemical dosing rate checks',
+        'Instrument calibration and records maintained'
+      ]),
+      alert: bulletList([
+        'Validate readings',
+        'Check primary dosing equipment, chlorine tank levels and injection point',
+        'Check disinfection levels including free chlorine, total chlorine, NTU and pH from primary dosing and adjust as required',
+        'Sample upstream and downstream of sample point to identify source / cause',
+        'Check raw and/or filtered water conditions such as turbidity, pH and colour',
+        'Increase or decrease chlorine dose at plant if needed',
+        'Contact EME',
+        'Complete Initial Incident Report Form'
+      ]),
+      critical: bulletList([
+        'Follow Alert Level corrective actions',
+        'Inform WSS',
+        'Shut WTP down if required',
+        'Take micro-sample if low disinfection levels or nitrification suspected',
+        'Check reservoir outlet / water to town chlorine residual',
+        'Consider manual top-up dosing of reservoir',
+        'Activate duty-assist backup dosing of chlorine leaving reservoir if final chlorine level is below 0.5 mg/L',
+        'WSS to contact Executive Manager Engineering',
+        'EME to consider advising DNRME / Queensland Health or submitting Water Quality Incident Report Form Part A & B if NTU exceeds 5',
+        'Management to consider Incident Plan of Action, including boil water alert if required',
+        'Complete Initial Incident Report Form'
+      ])
+    },
+
+    ccp4: {
+      label: 'BKT CCP4 – Reservoir Integrity',
+      overview: `
+        <strong>Process / Control Point</strong><br>Reservoirs
+        <div class="section"><strong>Hazards</strong><br>All pathogens and all chemicals</div>
+        <div class="section"><strong>Monitoring</strong><br>Reservoir integrity, chlorine and turbidity</div>
+        <div class="section"><strong>Frequency</strong><br>Weekly–monthly physical inspection with online water quality monitoring and manual cross-checks 3–5 days/week</div>
+        <div class="section"><strong>Location</strong><br>Reservoir outlet / reticulation entry point</div>
+        <div class="section"><strong>Response Trigger</strong><br>Any sign of reservoir integrity breach</div>
+      `,
+      limits: `<div class="limitGrid">${limitBox('TARGET', 'No breach of reservoir integrity<br>Chlorine: 0.8–1 mg/L<br>NTU: &lt;0.2')}${limitBox('ALERT LEVEL', 'Any sign of integrity breach<br>Chlorine: &lt;0.5 or &gt;1.5 mg/L<br>NTU: &gt;0.5')}${limitBox('CRITICAL LIMIT', 'Evidence of contamination<br>Chlorine: &lt;0.5 or &gt;4 mg/L<br>NTU: &gt;1')}</div>`,
+      routine: bulletList([
+        'Reservoir inspection program with records maintained',
+        'Scheduled contractor reservoir cleaning and inspection program where in place',
+        'Routine equipment maintenance and calibration',
+        'Routine inspection of dosing systems and reservoir',
+        'Routine monitoring of SCADA trends'
+      ]),
+      alert: bulletList([
+        'Visual inspection outside and inside reservoir',
+        'Check disinfection levels, free and total chlorine',
+        'Increase or decrease dose at plant',
+        'Contact WSS / EME',
+        'Adjust dose rates as required; consider reservoir top-up if chlorine is low',
+        'Review trends and check backwashes have been completed; look for point of change and possible causes',
+        'Repair breach of integrity',
+        'Complete Initial Incident Report Form'
+      ]),
+      critical: bulletList([
+        'Follow Alert Level corrective actions',
+        'Inform WSC',
+        'Take micro-sample if required',
+        'Remove contaminants if safe to do so',
+        'Dose disinfectant to reservoir if needed',
+        'Activate duty-assist chlorine dosing to top up chlorine leaving reservoir',
+        'WSC to contact Executive Manager Engineering',
+        'Manager to contact DNRME / Queensland Health',
+        'Management to consider need to initiate incident response',
+        'Complete Water Quality Incident Report Form Part A & B and submit to DNRME if NTU exceeds 5',
+        'Complete Initial Incident Report Form',
+        'Seek technical support as required'
+      ])
+    }
+  },
+
+  gregory: {
+    ccp1: {
+      label: 'GGY CCP1 – Raw Water Intake',
+      overview: `
+        <strong>Process / Control Point</strong><br>Raw water abstraction / Gregory River
+        <div class="section"><strong>Hazards</strong><br>All pathogens, turbidity</div>
+        <div class="section"><strong>Monitoring</strong><br>Turbidity and chlorine</div>
+        <div class="section"><strong>Frequency</strong><br>Continuous online and raw water grab sample 3–5 days/week when WTP operational</div>
+        <div class="section"><strong>Location</strong><br>WTP inlet and/or Gregory River offtake</div>
+        <div class="section"><strong>Response Trigger</strong><br>Online instrument alarm, turbidity grab sample, or manual cross-check of online instrument</div>
+      `,
+      limits: `<div class="limitGrid">${limitBox('TARGET', '&lt;5 NTU')}${limitBox('ALERT LEVEL', '20 NTU')}${limitBox('CRITICAL LIMIT', '50 NTU')}</div>`,
+      routine: bulletList([
+        'Routine site and operational checks',
+        'Equipment correlation checks against bench meters and WTP PLC records',
+        'Raw water testing for turbidity and pH',
+        'Weekly visual inspections of river offtake'
+      ]),
+      alert: bulletList([
+        'Repeat manual tests to confirm levels',
+        'Visually assess river for increased turbidity and measure manually',
+        'Initiate incident monitoring program in raw water if required',
+        'Notify Water and Sewerage Supervisor (WSS)',
+        'Monitor turbidity post settling and draw-off ponds',
+        'Check coagulant dose rates — jar test and adjust as required',
+        'Monitor and increase chlorine dose at plant if filtered water turbidity is compromised',
+        'Complete Initial Incident Report Form'
+      ]),
+      critical: bulletList([
+        'Isolate and contain source of high turbidity — only pump if essential',
+        'Shut down treatment plant',
+        'Monitor raw water turbidity daily until stable and declining',
+        'Consider alternative water supply / storage where possible',
+        'WSS to inform Manager / Executive Manager Engineering',
+        'Monitor treatment process closely; jar test and adjust dose rates, slow flow, and monitor coagulation and draw-off pond turbidity',
+        'Maintain appropriate disinfection levels in the network; increase chlorine dose if filtered turbidity is compromised',
+        'Management to consider Incident Plan of Action, including boil water alert if required',
+        'Complete Initial Incident Report Form'
+      ])
+    },
+
+    ccp2: {
+      label: 'GGY CCP2 – Clarification Stage',
+      overview: `
+        <strong>Process / Control Point</strong><br>Water Treatment Plant clarification stage
+        <div class="section"><strong>Hazards</strong><br>Turbidity, pathogens</div>
+        <div class="section"><strong>Monitoring</strong><br>Turbidity</div>
+        <div class="section"><strong>Frequency</strong><br>Continuous online, manual test 3–5 days/week</div>
+        <div class="section"><strong>Location</strong><br>Water Treatment Plant clarifier outlet</div>
+        <div class="section"><strong>Response Trigger</strong><br>Increasing filtered water turbidity or low dosed water chlorine</div>
+      `,
+      limits: `<div class="limitGrid">${limitBox('TARGET', '&lt;1 NTU')}${limitBox('ALERT LEVEL', '&gt;2 NTU')}${limitBox('CRITICAL LIMIT', '&gt;5 NTU')}</div>`,
+      routine: bulletList([
+        'Routine site and equipment checks at WTP',
+        'Equipment correlation with bench meters and records stored in water quality database / plant sheets',
+        'Chemical procurement and delivery requirements',
+        'Chemical dosing rate checks and jar tests as required',
+        'Instrument calibration and records maintained'
+      ]),
+      alert: bulletList([
+        'Validate readings with alternative meter where possible',
+        'Check coagulant dosing rates and jar test; adjust dose rate as required',
+        'Check operation of coagulant dosing pump',
+        'Initiate filter backwash sequence and observe',
+        'Check raw water conditions such as turbidity and pH',
+        'Check river for any signs of contamination',
+        'Increase chlorine dose at plant if needed',
+        'Contact WSS',
+        'Complete initial incident response notification form'
+      ]),
+      critical: bulletList([
+        'Cease pumping from river',
+        'Inform WSS',
+        'Check coagulant dose rate and jar test; adjust dose rate as required',
+        'Check operation of coagulant dosing pump',
+        'Increase chlorine dose rate if filtered turbidity is compromised',
+        'WSS to contact Manager',
+        'Management to consider Incident Plan of Action, including boil water alert if required',
+        'Complete Water Quality Incident Report Form Part A & B and submit to DNRME',
+        'Seek technical support to identify and rectify fault'
+      ])
+    },
+
+    ccp3: {
+      label: 'GGY CCP3 – Filtration Stage',
+      overview: `
+        <strong>Process / Control Point</strong><br>Water Treatment Plant filtration stage
+        <div class="section"><strong>Hazard</strong><br>Turbidity</div>
+        <div class="section"><strong>Monitoring</strong><br>Turbidity</div>
+        <div class="section"><strong>Frequency</strong><br>Continuous online, manual test 3–5 days/week</div>
+        <div class="section"><strong>Location</strong><br>Water Treatment Plant filter outlet</div>
+        <div class="section"><strong>Response Trigger</strong><br>Increasing filtered water turbidity</div>
+      `,
+      limits: `<div class="limitGrid">${limitBox('TARGET', '&lt;0.2 NTU')}${limitBox('ALERT LEVEL', '&gt;0.5 NTU')}${limitBox('CRITICAL LIMIT', '&gt;1 NTU')}</div>`,
+      routine: bulletList([
+        'Routine site and equipment checks at WTP',
+        'Equipment correlation with bench meters and records stored in water quality database / plant sheets',
+        'Routine checks of coagulant dose rates and dosing system',
+        'Routine observation of backwash sequences and flow trends',
+        'Chemical procurement and delivery requirements',
+        'Chemical dosing rate checks',
+        'Instrument calibration and records maintained'
+      ]),
+      alert: bulletList([
+        'Validate readings with alternative meter where possible',
+        'Check coagulant dosing rates and residuals; adjust dose rate as required',
+        'Jar test and adjust coagulant dose rate',
+        'Initiate filter backwash sequence and observe',
+        'Check raw water quality conditions such as turbidity and pH',
+        'Check river for any signs of contamination',
+        'Contact WSS and notify Executive Manager Engineering',
+        'Complete initial incident response notification form'
+      ]),
+      critical: bulletList([
+        'Follow Alert Level corrective actions',
+        'Inform WSS',
+        'Take micro-sample if low disinfection levels or nitrification suspected',
+        'Increase chlorine residual rate to ensure residual is maintained to end of reticulation',
+        'Consider reservoir top-up chlorine dosing',
+        'WSC to contact Executive Manager Engineering',
+        'EME to contact DNRME and Queensland Health',
+        'EME to consider Incident Plan of Action, including boil water alert if required',
+        'Complete Water Quality Incident Report Form Part A & B and submit to DNRME',
+        'Seek technical support to identify and rectify fault if necessary',
+        'Consider scheduling filter inspection to assess media and internal condition of filters'
+      ])
+    },
+
+    ccp4: {
+      label: 'GGY CCP4 – Water Treatment Plant Outlet / Post Chlorine',
+      overview: `
+        <strong>Process / Control Point</strong><br>Disinfection — chlorine mg/L
+        <div class="section"><strong>Hazards</strong><br>Chlorine-sensitive pathogens and chemical chlorine hazard</div>
+        <div class="section"><strong>Monitoring</strong><br>Free chlorine residual, pH and NTU</div>
+        <div class="section"><strong>Frequency</strong><br>Continuous online post storage and manual test 3–5 days/week</div>
+        <div class="section"><strong>Location</strong><br>Water Treatment Plant filter outlet</div>
+        <div class="section"><strong>Response Trigger</strong><br>Low or high chlorine residual and/or pH</div>
+      `,
+      limits: `<div class="limitGrid">${limitBox('TARGET', 'Free chlorine: 1.1–1.3 mg/L<br>pH: 7.0<br>NTU: &lt;0.3')}${limitBox('ALERT LEVEL', 'Free chlorine: &lt;1.0 or &gt;1.5 mg/L<br>pH: 8.3<br>NTU: &gt;0.5')}${limitBox('CRITICAL LIMIT', 'Free chlorine: &lt;0.5 or &gt;4.0 mg/L<br>pH: &lt;6.5 or &gt;8.5<br>NTU: &gt;1')}</div>`,
+      routine: bulletList([
+        'Routine site and equipment checks at WTP',
+        'Equipment correlation with bench meters and records stored in water quality database / plant sheets',
+        'Chemical procurement and delivery requirements',
+        'Chemical dosing rate checks',
+        'Instrument calibration and records maintained'
+      ]),
+      alert: bulletList([
+        'Validate readings',
+        'Check primary dosing equipment, chlorine tank levels and injection point',
+        'Check disinfection levels including free chlorine, total chlorine, NTU and pH from primary dosing and adjust as required',
+        'Sample upstream and downstream of sample point to identify source / cause',
+        'Check raw and/or filtered water conditions such as turbidity, pH and colour',
+        'Increase or decrease chlorine dose at plant if needed',
+        'Contact EME',
+        'Complete Initial Incident Report Form'
+      ]),
+      critical: bulletList([
+        'Follow Alert Level corrective actions',
+        'Inform WSS',
+        'Shut WTP down if required',
+        'Take micro-sample if low disinfection levels or nitrification suspected',
+        'Check reservoir outlet / water to town chlorine residual',
+        'Consider manual top-up dosing of reservoir',
+        'Activate duty-assist chlorine top-up dosing on water leaving reservoir if below 0.5 mg/L',
+        'WSS to contact Executive Manager Engineering',
+        'EME to consider advising DNRME / Queensland Health or submitting Water Quality Incident Report Form Part A & B if NTU exceeds 5',
+        'Management to consider Incident Plan of Action, including boil water alert if required',
+        'Complete Initial Incident Report Form'
+      ])
+    },
+
+    ccp5: {
+      label: 'GGY CCP5 – Reservoir Integrity',
+      overview: `
+        <strong>Process / Control Point</strong><br>Reservoirs
+        <div class="section"><strong>Hazards</strong><br>All pathogens and all chemicals</div>
+        <div class="section"><strong>Monitoring</strong><br>Reservoir integrity, chlorine and turbidity</div>
+        <div class="section"><strong>Frequency</strong><br>Weekly–monthly physical inspection with online water quality monitoring and manual cross-checks 3–5 days/week</div>
+        <div class="section"><strong>Location</strong><br>Reservoir outlet / reticulation entry point</div>
+        <div class="section"><strong>Response Trigger</strong><br>Any sign of reservoir integrity breach</div>
+      `,
+      limits: `<div class="limitGrid">${limitBox('TARGET', 'No breach of reservoir integrity<br>Chlorine: 0.8–1 mg/L<br>NTU: &lt;0.2')}${limitBox('ALERT LEVEL', 'Any sign of integrity breach<br>Chlorine: &lt;0.5 or &gt;1.5 mg/L<br>NTU: &gt;0.5')}${limitBox('CRITICAL LIMIT', 'Evidence of contamination<br>Chlorine: &lt;0.5 or &gt;4 mg/L<br>NTU: &gt;1')}</div>`,
+      routine: bulletList([
+        'Reservoir inspection program with records maintained',
+        'Scheduled contractor reservoir cleaning and inspection program where in place',
+        'Routine equipment maintenance and calibration',
+        'Routine inspection of dosing systems and reservoir',
+        'Routine monitoring of SCADA trends'
+      ]),
+      alert: bulletList([
+        'Visual inspection outside and inside reservoir',
+        'Check disinfection levels, free and total chlorine',
+        'Increase or decrease dose at plant',
+        'Contact WSS / EME',
+        'Adjust dose rates as required; consider reservoir top-up if chlorine is low',
+        'Review trends and check backwashes have been completed; look for point of change and possible causes',
+        'Repair breach of integrity',
+        'Complete Initial Incident Report Form'
+      ]),
+      critical: bulletList([
+        'Follow Alert Level corrective actions',
+        'Inform WSC',
+        'Take micro-sample if required',
+        'Remove contaminants if safe to do so',
+        'Dose disinfectant to reservoir if needed',
+        'Activate duty-assist chlorine dosing to top up chlorine leaving reservoir',
+        'WSC to contact Executive Manager Engineering',
+        'Manager to contact DNRME / Queensland Health',
+        'Management to consider need to initiate incident response',
+        'Complete Water Quality Incident Report Form Part A & B and submit to DNRME if NTU exceeds 5',
+        'Complete Initial Incident Report Form',
+        'Seek technical support as required',
+        'Repair breach of integrity'
+      ])
+    }
+  }
+};
+
+function renderCcpOptions() {
+  const site = document.getElementById('siteSelect').value;
+  const select = document.getElementById('ccpSelect');
+  const current = select.value;
+
+  select.innerHTML = Object.keys(PLACARDS[site]).map(key => {
+    return `<option value="${key}">${PLACARDS[site][key].label}</option>`;
+  }).join('');
+
+  if (PLACARDS[site][current]) select.value = current;
+}
+
+function getActionsContent(p) {
+  return `
+    <div class="limitBox amber">
+      <strong><span class="dot amber"></span> Amber Response (Alert)</strong><br><br>
+      ${p.alert}
+    </div>
+
+    <div class="limitBox red">
+      <strong><span class="dot red"></span> Red Response (Critical)</strong><br><br>
+      ${p.critical}
+    </div>
+  `;
+}
+
+function renderPlacard() {
+  const site = document.getElementById('siteSelect').value;
+  const ccp = document.getElementById('ccpSelect').value;
+  const p = PLACARDS[site]?.[ccp];
+
+  if (!p) {
+    document.getElementById('placard').innerHTML = 'No data';
+    return;
+  }
+
+  if (mode === 'actions') {
+    document.getElementById('placard').innerHTML = getActionsContent(p);
+  } else {
+    document.getElementById('placard').innerHTML = p[mode] || 'No data';
+  }
+}
+
+/* =========================
+   INIT
+========================= */
+
+document.getElementById('location').innerText = '';
+
+render();
+
+/* =========================
+   EXPORT CSV
+========================= */
+
+function exportCSV() {
+
+  const site = getSite();
+  const data = JSON.parse(localStorage.getItem('ccpDraftData_' + site) || '{}');
+
+  const STATUS_MAP = {
+    green: 'Compliant (Green)',
+    amber: 'Warning (Amber)',
+    red: 'Critical (Red)',
+    gray: 'No Data'
+  };
+
+  // 🔥 enforce CCP order
+  const CCP_ORDER = ['ccp1','ccp2','ccp3','ccp4','ccp5'];
+
+  let rows = [];
+  rows.push(['Site','CCP','Parameter','Value','Status','Operator','Time']);
+
+  CCP_ORDER.forEach(ccp => {
+
+    const record = data[ccp];
+    if (!record) return;
+
+    const ccpName = CONFIG[ccp]?.name || ccp;
+
+    const params = {};
+
+    Object.keys(record).forEach(key => {
+
+      if (['time','operator','location'].includes(key)) return;
+
+      if (key.endsWith('_value')) {
+        const base = key.replace('_value','');
+        params[base] = params[base] || {};
+        params[base].value = record[key];
+      } else {
+        params[key] = params[key] || {};
+        params[key].status = record[key];
+      }
+
+    });
+
+    Object.keys(params).forEach(p => {
+
+     // 🔥 CCP1 special handling
+let timeValue = '';
+if (ccp === 'ccp1') {
+  timeValue = record.time
+    ? new Date(record.time).toLocaleString() + ' (Weekly Monitoring)'
+    : 'Not Submitted';
+} else {
+  timeValue = record.time ? new Date(record.time).toLocaleString() : '';
+}
+      rows.push([
+        site,
+        ccpName,
+        LABELS[p] || p,
+        params[p].value || '',
+        STATUS_MAP[params[p].status] || '',
+        record.operator || '',
+        timeValue
+      ]);
+
+    });
+
+  });
+
+  const csvContent = rows.map(r => r.join(',')).join('\n');
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+
+  const operator = Object.values(data).find(r => r.operator)?.operator || 'Unknown';
+  const date = new Date().toISOString().split('T')[0];
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${site}_CCP_Log_${date}_${operator}.csv`;
+  link.click();
+}
+
+</script>
+</body>
+</html>
