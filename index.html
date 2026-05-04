@@ -23,7 +23,16 @@ body {
   border: 2px solid #111827;
   border-radius: 18px;
   box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  overflow: hidden;
 }
+
+.scrollArea {
+  max-height: calc(100vh - 240px);
+  overflow-y: auto;
+  margin-top: 10px;
+  padding-right: 6px;
+}
+
 
 /* =========================
    HEADER / LAYOUT
@@ -331,7 +340,9 @@ body {
     </div>
   </div>
 
-  <div id="list"></div>
+ <div class="scrollArea">
+   <div id="list"></div>
+ </div>
 
   <button class="submitAll" onclick="finalSubmit()" id="submitBtn">
     SUBMIT ALL CCP DATA
@@ -340,6 +351,7 @@ body {
   <div class="footer" id="footer"></div>
 
 </div>
+
 
 <!-- =========================
      PLACARD MODAL
