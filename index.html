@@ -3,6 +3,9 @@
 <head>
  <meta charset="UTF-8">
  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+ <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+
 <style>
 
 /* =========================
@@ -43,7 +46,7 @@ body {
   align-items: flex-start;
 }
 
-.title { font-size: 20px; font-weight: 800; line-height: 1.2; }
+.title { font-size: 20px; font-weight: 750; line-height: 1.2; }
 .location { font-size: 16px; font-weight: 700; }
 
 /* =========================
@@ -558,7 +561,7 @@ alert(`${ccp.toUpperCase()} missing ${labelMap[field]}`);
 
 localStorage.setItem('ccpFinalData_' + getSite(), JSON.stringify(draft));
 
-exportCSV();
+exportXLSX();
 
 // 🔥 reset for next daily run
 localStorage.removeItem('ccpLocked_' + getSite());
@@ -1162,85 +1165,253 @@ render();
    EXPORT CSV
 ========================= */
 
-function exportCSV() {
+
+async function exportXLSX() {
 
   const site = getSite();
-  const data = JSON.parse(localStorage.getItem('ccpDraftData_' + site) || '{}');
 
-  const STATUS_MAP = {
-    green: 'Compliant (Green)',
-    amber: 'Warning (Amber)',
-    red: 'Critical (Red)',
-    gray: 'No Data'
-  };
+  // 🔥 TEMPLATE FILE
+  const templateFile =
+    site === 'Gregory'
+      ? 'Gregory WTP Logsheet.xlsx'
+      : 'Burketown WTP Logsheet.xlsx';
 
-  // 🔥 enforce CCP order
-  const CCP_ORDER = ['ccp1','ccp2','ccp3','ccp4','ccp5'];
+  // 🔥 LOAD TEMPLATE
+  const response = await fetch(templateFile);
+  const arrayBuffer = await response.arrayBuffer();
 
-  let rows = [];
-  rows.push(['Site','CCP','Parameter','Value','Status','Operator','Time']);
-
-  CCP_ORDER.forEach(ccp => {
-
-    const record = data[ccp];
-    if (!record) return;
-
-    const ccpName = CONFIG[ccp]?.name || ccp;
-
-    const params = {};
-
-    Object.keys(record).forEach(key => {
-
-      if (['time','operator','location'].includes(key)) return;
-
-      if (key.endsWith('_value')) {
-        const base = key.replace('_value','');
-        params[base] = params[base] || {};
-        params[base].value = record[key];
-      } else {
-        params[key] = params[key] || {};
-        params[key].status = record[key];
-      }
-
-    });
-
-    Object.keys(params).forEach(p => {
-
-     // 🔥 CCP1 special handling
-let timeValue = '';
-if (ccp === 'ccp1') {
-  timeValue = record.time
-    ? new Date(record.time).toLocaleString() + ' (Weekly Monitoring)'
-    : 'Not Submitted';
-} else {
-  timeValue = record.time ? new Date(record.time).toLocaleString() : '';
-}
-      rows.push([
-        site,
-        ccpName,
-        LABELS[p] || p,
-        params[p].value || '',
-        STATUS_MAP[params[p].status] || '',
-        record.operator || '',
-        timeValue
-      ]);
-
-    });
-
+  const workbook = XLSX.read(arrayBuffer, {
+    type: 'array',
+    cellStyles: true
   });
 
-  const csvContent = rows.map(r => r.join(',')).join('\n');
+  const sheet = workbook.Sheets['Sheet1'];
 
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
+  // 🔥 LOAD CCP DATA
+  const data = JSON.parse(
+    localStorage.getItem('ccpDraftData_' + site) || '{}'
+  );
 
-  const operator = Object.values(data).find(r => r.operator)?.operator || 'Unknown';
-  const date = new Date().toISOString().split('T')[0];
+  // 🔥 FIND NEXT ROW
+  let row = 8;
 
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `${site}_CCP_Log_${date}_${operator}.csv`;
-  link.click();
+  while (sheet['A' + row]) {
+    row++;
+  }
+
+  // 🔥 DATE / TIME
+  const now = new Date();
+
+  const date =
+    now.toLocaleDateString('en-AU');
+
+  const time =
+    now.toLocaleTimeString('en-AU', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+  // 🔥 HELPER
+  function setCell(cell, value, colour = null) {
+
+    sheet[cell] = {
+      t: typeof value === 'number' ? 'n' : 's',
+      v: value
+    };
+
+    // 🔥 FAINT COLOURS
+    if (colour) {
+
+      const fills = {
+        green: 'E2F0D9',
+        amber: 'FFF2CC',
+        red: 'FDE9D9'
+      };
+
+      sheet[cell].s = {
+        fill: {
+          fgColor: { rgb: fills[colour] }
+        }
+      };
+    }
+  }
+
+  // 🔥 BASIC INFO
+  setCell('A' + row, date);
+  setCell('B' + row, time);
+
+  // =========================
+  // CCP1
+  // =========================
+
+  if (data.ccp1) {
+
+    setCell(
+      'C' + row,
+      data.ccp1.turbidity_online_value || '',
+      data.ccp1.turbidity_online || null
+    );
+
+    setCell(
+      'D' + row,
+      data.ccp1.turbidity_value || '',
+      data.ccp1.turbidity || null
+    );
+
+    setCell(
+      'E' + row,
+      data.ccp1.ph_value || '',
+      data.ccp1.ph || null
+    );
+  }
+
+  // =========================
+  // CCP2
+  // =========================
+
+  if (data.ccp2) {
+
+    setCell(
+      'F' + row,
+      data.ccp2.turbidity_online_value || '',
+      data.ccp2.turbidity_online || null
+    );
+
+    setCell(
+      'G' + row,
+      data.ccp2.turbidity_value || '',
+      data.ccp2.turbidity || null
+    );
+
+    setCell(
+      'H' + row,
+      data.ccp2.ph_online_value || '',
+      data.ccp2.ph_online || null
+    );
+
+    setCell(
+      'I' + row,
+      data.ccp2.ph_value || '',
+      data.ccp2.ph || null
+    );
+  }
+
+  // =========================
+  // CCP3
+  // =========================
+
+  if (data.ccp3) {
+
+    setCell(
+      'J' + row,
+      data.ccp3.turbidity_online_value || '',
+      data.ccp3.turbidity_online || null
+    );
+
+    setCell(
+      'K' + row,
+      data.ccp3.turbidity_value || '',
+      data.ccp3.turbidity || null
+    );
+
+    setCell(
+      'L' + row,
+      data.ccp3.ph_online_value || '',
+      data.ccp3.ph_online || null
+    );
+
+    setCell(
+      'M' + row,
+      data.ccp3.ph_value || '',
+      data.ccp3.ph || null
+    );
+
+    setCell(
+      'N' + row,
+      data.ccp3.chlorine_online_value || '',
+      data.ccp3.chlorine_online || null
+    );
+
+    setCell(
+      'O' + row,
+      data.ccp3.chlorine_value || '',
+      data.ccp3.chlorine || null
+    );
+
+    setCell(
+      'P' + row,
+      data.ccp3.uv_value || '',
+      data.ccp3.uv || null
+    );
+  }
+
+  // =========================
+  // CCP4
+  // =========================
+
+  if (data.ccp4) {
+
+    setCell(
+      'Q' + row,
+      data.ccp4.turbidity_online_value || '',
+      data.ccp4.turbidity_online || null
+    );
+
+    setCell(
+      'R' + row,
+      data.ccp4.turbidity_value || '',
+      data.ccp4.turbidity || null
+    );
+
+    setCell(
+      'S' + row,
+      data.ccp4.ph_online_value || '',
+      data.ccp4.ph_online || null
+    );
+
+    setCell(
+      'T' + row,
+      data.ccp4.ph_value || '',
+      data.ccp4.ph || null
+    );
+
+    setCell(
+      'U' + row,
+      data.ccp4.chlorine_online_value || '',
+      data.ccp4.chlorine_online || null
+    );
+
+    setCell(
+      'V' + row,
+      data.ccp4.chlorine_value || '',
+      data.ccp4.chlorine || null
+    );
+  }
+
+  // =========================
+  // CCP5
+  // =========================
+
+  if (data.ccp5) {
+
+    setCell(
+      'W' + row,
+      data.ccp5.integrity_value || '',
+      data.ccp5.integrity || null
+    );
+  }
+
+  // 🔥 OPERATOR
+  const operator =
+    Object.values(data).find(r => r.operator)?.operator || '';
+
+  setCell('X' + row, operator);
+
+  // 🔥 EXPORT
+  XLSX.writeFile(
+    workbook,
+    `${site}_Operational_Logsheet.xlsx`
+  );
 }
 
 </script>
