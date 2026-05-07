@@ -4,7 +4,7 @@
  <meta charset="UTF-8">
  <meta name="viewport" content="width=device-width, initial-scale=1">
 
- <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 
 <style>
 
@@ -1165,256 +1165,347 @@ render();
    EXPORT CSV
 ========================= */
 
-
 async function exportXLSX() {
 
   const site = getSite();
+  const data = JSON.parse(localStorage.getItem('ccpDraftData_' + site) || '{}');
 
-  // 🔥 TEMPLATE FILE
-  const templateFile =
-    site === 'Gregory'
-      ? 'Gregory WTP Logsheet.xlsx'
-      : 'Burketown WTP Logsheet.xlsx';
+  const workbook = XLSX.utils.book_new();
 
-  // 🔥 LOAD TEMPLATE
-  const response = await fetch(templateFile);
-  const arrayBuffer = await response.arrayBuffer();
-
-  const workbook = XLSX.read(arrayBuffer, {
-    type: 'array',
-    cellStyles: true
-  });
-
-  const sheet = workbook.Sheets['Sheet1'];
-
-  // 🔥 LOAD CCP DATA
-  const data = JSON.parse(
-    localStorage.getItem('ccpDraftData_' + site) || '{}'
-  );
-
-  // 🔥 FIND NEXT ROW
-  let row = 8;
-
- while (
-  sheet['B' + row] &&
-  sheet['B' + row].v !== ''
-) {
-  row++;
-} 
-
-  // 🔥 DATE / TIME
   const now = new Date();
 
-  const date =
-    now.toLocaleDateString('en-AU');
+  const date = now.toLocaleDateString('en-GB');
 
-  const time =
-    now.toLocaleTimeString('en-AU', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  const time = now.toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
 
-  // 🔥 HELPER
-  function setCell(cell, value, colour = null) {
+  const timestamp = now.toLocaleString('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
 
-    sheet[cell] = {
-      t: typeof value === 'number' ? 'n' : 's',
-      v: value
-    };
+  const monthName = now.toLocaleString('default', { month: 'long' });
+  const year = now.getFullYear();
 
-    // 🔥 FAINT COLOURS
-    if (colour) {
-
-      const fills = {
-        green: 'E2F0D9',
-        amber: 'FFF2CC',
-        red: 'FDE9D9'
-      };
-
-      sheet[cell].s = {
-        fill: {
-          fgColor: { rgb: fills[colour] }
-        }
-      };
-    }
-  }
-
-  // 🔥 BASIC INFO
-  setCell('A' + row, date);
-  setCell('B' + row, time);
-
-  // =========================
-  // CCP1
-  // =========================
-
-  if (data.ccp1) {
-
-    setCell(
-      'C' + row,
-      data.ccp1.turbidity_online_value || '',
-      data.ccp1.turbidity_online || null
-    );
-
-    setCell(
-      'D' + row,
-      data.ccp1.turbidity_value || '',
-      data.ccp1.turbidity || null
-    );
-
-    setCell(
-      'E' + row,
-      data.ccp1.ph_value || '',
-      data.ccp1.ph || null
-    );
-  }
-
-  // =========================
-  // CCP2
-  // =========================
-
-  if (data.ccp2) {
-
-    setCell(
-      'F' + row,
-      data.ccp2.turbidity_online_value || '',
-      data.ccp2.turbidity_online || null
-    );
-
-    setCell(
-      'G' + row,
-      data.ccp2.turbidity_value || '',
-      data.ccp2.turbidity || null
-    );
-
-    setCell(
-      'H' + row,
-      data.ccp2.ph_online_value || '',
-      data.ccp2.ph_online || null
-    );
-
-    setCell(
-      'I' + row,
-      data.ccp2.ph_value || '',
-      data.ccp2.ph || null
-    );
-  }
-
-  // =========================
-  // CCP3
-  // =========================
-
-  if (data.ccp3) {
-
-    setCell(
-      'J' + row,
-      data.ccp3.turbidity_online_value || '',
-      data.ccp3.turbidity_online || null
-    );
-
-    setCell(
-      'K' + row,
-      data.ccp3.turbidity_value || '',
-      data.ccp3.turbidity || null
-    );
-
-    setCell(
-      'L' + row,
-      data.ccp3.ph_online_value || '',
-      data.ccp3.ph_online || null
-    );
-
-    setCell(
-      'M' + row,
-      data.ccp3.ph_value || '',
-      data.ccp3.ph || null
-    );
-
-    setCell(
-      'N' + row,
-      data.ccp3.chlorine_online_value || '',
-      data.ccp3.chlorine_online || null
-    );
-
-    setCell(
-      'O' + row,
-      data.ccp3.chlorine_value || '',
-      data.ccp3.chlorine || null
-    );
-
-    setCell(
-      'P' + row,
-      data.ccp3.uv_value || '',
-      data.ccp3.uv || null
-    );
-  }
-
-  // =========================
-  // CCP4
-  // =========================
-
-  if (data.ccp4) {
-
-    setCell(
-      'Q' + row,
-      data.ccp4.turbidity_online_value || '',
-      data.ccp4.turbidity_online || null
-    );
-
-    setCell(
-      'R' + row,
-      data.ccp4.turbidity_value || '',
-      data.ccp4.turbidity || null
-    );
-
-    setCell(
-      'S' + row,
-      data.ccp4.ph_online_value || '',
-      data.ccp4.ph_online || null
-    );
-
-    setCell(
-      'T' + row,
-      data.ccp4.ph_value || '',
-      data.ccp4.ph || null
-    );
-
-    setCell(
-      'U' + row,
-      data.ccp4.chlorine_online_value || '',
-      data.ccp4.chlorine_online || null
-    );
-
-    setCell(
-      'V' + row,
-      data.ccp4.chlorine_value || '',
-      data.ccp4.chlorine || null
-    );
-  }
-
-  // =========================
-  // CCP5
-  // =========================
-
-  if (data.ccp5) {
-
-    setCell(
-      'W' + row,
-      data.ccp5.integrity_value || '',
-      data.ccp5.integrity || null
-    );
-  }
-
-  // 🔥 OPERATOR
   const operator =
     Object.values(data).find(r => r.operator)?.operator || '';
 
-  setCell('X' + row, operator);
+  const rows = [
+    [`${site} Water Treatment Plant Logsheet`],
+    [],
+    ['Year', year, '', '', '', '', '', '', '', '', 'Month', monthName],
+    [],
+    [
+      'Date / Time / Entry', '', '',
+      'Raw and Settled / Clarified Water', '', '', '', '', '', '',
+      'Filtered & Disinfected Water', '', '', '', '', '', '',
+      'Treatment Plant Outlet', '', '', '', '', '',
+      'Town Reservoir',
+      'Operator'
+    ],
+    [
+      'Date',
+      'Time',
+      'Entry Timestamp',
 
-  // 🔥 EXPORT
-  XLSX.writeFile(
-    workbook,
-    `${site}_Operational_Logsheet.xlsx`
-  );
+      'CCP1 Raw Water Turbidity NTU',
+      '',
+      'CCP1 pH (weekly)',
+
+      'CCP2 Settled Water Turbidity NTU',
+      '',
+      'CCP2 Settled Water pH',
+      '',
+
+      'CCP3 Filtered Water Turbidity NTU',
+      '',
+      'CCP3 Filtered Water pH',
+      '',
+      'CCP3 Filtered Water Chlorine mg/L',
+      '',
+      'CCP3 UV Intensity',
+
+      'CCP4 Town Water Turbidity NTU',
+      '',
+      'CCP4 Town Water pH',
+      '',
+      'CCP4 Town Water Chlorine mg/L',
+      '',
+
+      'CCP5 Reservoir Integrity Breach',
+
+      'Operator Name'
+    ],
+    [
+      '',
+      '',
+      '',
+
+      'On Line',
+      'Bench',
+      'Bench',
+
+      'On Line',
+      'Bench',
+      'On Line',
+      'Bench',
+
+      'On Line',
+      'Bench',
+      'On Line',
+      'Bench',
+      'On Line',
+      'Bench',
+      '',
+
+      'On Line',
+      'Bench',
+      'On Line',
+      'Bench',
+      'On Line',
+      'Bench',
+
+      'Yes / No',
+
+      ''
+    ],
+    [
+      date,
+      time,
+      timestamp,
+
+      data.ccp1?.turbidity_online_value || '',
+      data.ccp1?.turbidity_value || '',
+      data.ccp1?.ph_value || '',
+
+      data.ccp2?.turbidity_online_value || '',
+      data.ccp2?.turbidity_value || '',
+      data.ccp2?.ph_online_value || '',
+      data.ccp2?.ph_value || '',
+
+      data.ccp3?.turbidity_online_value || '',
+      data.ccp3?.turbidity_value || '',
+      data.ccp3?.ph_online_value || '',
+      data.ccp3?.ph_value || '',
+      data.ccp3?.chlorine_online_value || '',
+      data.ccp3?.chlorine_value || '',
+      data.ccp3?.uv_value || '',
+
+      data.ccp4?.turbidity_online_value || '',
+      data.ccp4?.turbidity_value || '',
+      data.ccp4?.ph_online_value || '',
+      data.ccp4?.ph_value || '',
+      data.ccp4?.chlorine_online_value || '',
+      data.ccp4?.chlorine_value || '',
+
+      data.ccp5?.integrity_value || '',
+
+      operator
+    ]
+  ];
+
+  const sheet = XLSX.utils.aoa_to_sheet(rows);
+
+  sheet['!merges'] = [
+    { s:{r:0,c:0}, e:{r:0,c:24} },
+
+    { s:{r:4,c:0}, e:{r:4,c:2} },
+    { s:{r:4,c:3}, e:{r:4,c:9} },
+    { s:{r:4,c:10}, e:{r:4,c:16} },
+    { s:{r:4,c:17}, e:{r:4,c:22} },
+    { s:{r:4,c:23}, e:{r:4,c:23} },
+    { s:{r:4,c:24}, e:{r:4,c:24} },
+
+    { s:{r:5,c:0}, e:{r:6,c:0} },
+    { s:{r:5,c:1}, e:{r:6,c:1} },
+    { s:{r:5,c:2}, e:{r:6,c:2} },
+
+    { s:{r:5,c:3}, e:{r:5,c:4} },
+    { s:{r:5,c:6}, e:{r:5,c:7} },
+    { s:{r:5,c:8}, e:{r:5,c:9} },
+
+    { s:{r:5,c:10}, e:{r:5,c:11} },
+    { s:{r:5,c:12}, e:{r:5,c:13} },
+    { s:{r:5,c:14}, e:{r:5,c:15} },
+
+    { s:{r:5,c:17}, e:{r:5,c:18} },
+    { s:{r:5,c:19}, e:{r:5,c:20} },
+    { s:{r:5,c:21}, e:{r:5,c:22} },
+
+    { s:{r:5,c:5}, e:{r:6,c:5} },
+    { s:{r:5,c:16}, e:{r:6,c:16} },
+    { s:{r:5,c:23}, e:{r:6,c:23} },
+    { s:{r:5,c:24}, e:{r:6,c:24} }
+  ];
+
+  sheet['!cols'] = [
+    {wch:12}, {wch:10}, {wch:19},
+    {wch:12}, {wch:12}, {wch:12},
+    {wch:12}, {wch:12}, {wch:12}, {wch:12},
+    {wch:12}, {wch:12}, {wch:12}, {wch:12},
+    {wch:12}, {wch:12}, {wch:12},
+    {wch:12}, {wch:12}, {wch:12}, {wch:12},
+    {wch:12}, {wch:12},
+    {wch:16},
+    {wch:18}
+  ];
+
+  sheet['!rows'] = [
+    {hpx:52},
+    {hpx:18},
+    {hpx:34},
+    {hpx:18},
+    {hpx:42},
+    {hpx:56},
+    {hpx:36},
+    {hpx:28}
+  ];
+
+  const border = {
+    top: { style: 'thin', color: { rgb: '000000' } },
+    bottom: { style: 'thin', color: { rgb: '000000' } },
+    left: { style: 'thin', color: { rgb: '000000' } },
+    right: { style: 'thin', color: { rgb: '000000' } }
+  };
+
+  function cell(r, c) {
+    return XLSX.utils.encode_cell({ r, c });
+  }
+
+  function applyStyle(r, c, style) {
+    const ref = cell(r, c);
+    if (!sheet[ref]) sheet[ref] = { t: 's', v: '' };
+    sheet[ref].s = style;
+  }
+
+  function applyRange(r1, c1, r2, c2, style) {
+    for (let r = r1; r <= r2; r++) {
+      for (let c = c1; c <= c2; c++) {
+        applyStyle(r, c, style);
+      }
+    }
+  }
+
+  const titleStyle = {
+    font: { bold: true, sz: 26, color: { rgb: '000000' } },
+    alignment: { horizontal: 'center', vertical: 'center' }
+  };
+
+  const metaStyle = {
+    font: { bold: true, sz: 12 },
+    alignment: { horizontal: 'center', vertical: 'center' },
+    border
+  };
+
+  const greenGroup = {
+    font: { bold: true, sz: 12 },
+    fill: { patternType: 'solid', fgColor: { rgb: 'E2F0D9' } },
+    alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+    border
+  };
+
+  const blueGroup = {
+    font: { bold: true, sz: 12 },
+    fill: { patternType: 'solid', fgColor: { rgb: 'D9E2F3' } },
+    alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+    border
+  };
+
+  const creamGroup = {
+    font: { bold: true, sz: 12 },
+    fill: { patternType: 'solid', fgColor: { rgb: 'FFF2CC' } },
+    alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+    border
+  };
+
+  const headerStyle = {
+    font: { bold: true, sz: 11 },
+    fill: { patternType: 'solid', fgColor: { rgb: 'DDEBF7' } },
+    alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+    border
+  };
+
+  const dataStyle = {
+    font: { sz: 11 },
+    alignment: { horizontal: 'center', vertical: 'center' },
+    border
+  };
+
+  applyRange(0, 0, 0, 24, titleStyle);
+  applyRange(2, 0, 2, 11, metaStyle);
+
+  applyRange(4, 0, 4, 2, headerStyle);
+  applyRange(4, 3, 4, 9, greenGroup);
+  applyRange(4, 10, 4, 16, blueGroup);
+  applyRange(4, 17, 4, 22, creamGroup);
+  applyRange(4, 23, 4, 23, greenGroup);
+  applyRange(4, 24, 4, 24, headerStyle);
+
+  applyRange(5, 0, 6, 24, headerStyle);
+  applyRange(7, 0, 7, 24, dataStyle);
+
+  function colourCell(col, status) {
+    if (!status) return;
+
+    const fills = {
+      green: 'E2F0D9',
+      amber: 'FFF2CC',
+      red: 'F4CCCC'
+    };
+
+    const ref = cell(7, col);
+    if (!sheet[ref]) return;
+
+    sheet[ref].s = {
+      ...dataStyle,
+      fill: {
+        patternType: 'solid',
+        fgColor: { rgb: fills[status] || 'FFFFFF' }
+      }
+    };
+  }
+
+  colourCell(3, data.ccp1?.turbidity_online);
+  colourCell(4, data.ccp1?.turbidity);
+  colourCell(5, data.ccp1?.ph);
+
+  colourCell(6, data.ccp2?.turbidity_online);
+  colourCell(7, data.ccp2?.turbidity);
+  colourCell(8, data.ccp2?.ph_online);
+  colourCell(9, data.ccp2?.ph);
+
+  colourCell(10, data.ccp3?.turbidity_online);
+  colourCell(11, data.ccp3?.turbidity);
+  colourCell(12, data.ccp3?.ph_online);
+  colourCell(13, data.ccp3?.ph);
+  colourCell(14, data.ccp3?.chlorine_online);
+  colourCell(15, data.ccp3?.chlorine);
+  colourCell(16, data.ccp3?.uv);
+
+  colourCell(17, data.ccp4?.turbidity_online);
+  colourCell(18, data.ccp4?.turbidity);
+  colourCell(19, data.ccp4?.ph_online);
+  colourCell(20, data.ccp4?.ph);
+  colourCell(21, data.ccp4?.chlorine_online);
+  colourCell(22, data.ccp4?.chlorine);
+
+  colourCell(23, data.ccp5?.integrity);
+
+  sheet['!views'] = [{ state: 'frozen', ySplit: 7 }];
+
+  XLSX.utils.book_append_sheet(workbook, sheet, 'Operational Logsheet');
+
+  const filename =
+    `${site}_WTP_Digital_Logsheet_${monthName}_${year}.xlsx`;
+
+  XLSX.writeFile(workbook, filename);
 }
 
 </script>
