@@ -1195,9 +1195,12 @@ async function exportXLSX() {
   // 🔥 FIND NEXT ROW
   let row = 8;
 
-  while (sheet['A' + row]) {
-    row++;
-  }
+ while (
+  sheet['B' + row] &&
+  sheet['B' + row].v !== ''
+) {
+  row++;
+} 
 
   // 🔥 DATE / TIME
   const now = new Date();
