@@ -518,7 +518,7 @@ function renderFooter(data) {
    DASHBOARD ACTIONS
 ========================= */
 
-function finalSubmit() {
+async function finalSubmit() {
   if (!confirm('Final submit? This will lock all data.')) return;
 
   const draft = getDraft();
@@ -561,7 +561,7 @@ alert(`${ccp.toUpperCase()} missing ${labelMap[field]}`);
 
 localStorage.setItem('ccpFinalData_' + getSite(), JSON.stringify(draft));
 
-exportXLSX();
+await exportXLSX();
 
 // 🔥 reset for next daily run
 localStorage.removeItem('ccpLocked_' + getSite());
