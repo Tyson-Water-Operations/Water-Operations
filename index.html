@@ -1454,6 +1454,25 @@ async function exportXLSX() {
   applyRange(5, 0, 6, 24, headerStyle);
   applyRange(7, 0, 7, 24, dataStyle);
 
+const greyStyle = {
+  ...headerStyle,
+  fill: { patternType: 'solid', fgColor: { rgb: 'E7E6E6' } }
+};
+
+applyStyle(6,4,greyStyle);
+applyStyle(6,5,greyStyle);
+
+applyStyle(6,7,greyStyle);
+applyStyle(6,9,greyStyle);
+
+applyStyle(6,11,greyStyle);
+applyStyle(6,13,greyStyle);
+applyStyle(6,15,greyStyle);
+
+applyStyle(6,18,greyStyle);
+applyStyle(6,20,greyStyle);
+applyStyle(6,22,greyStyle);
+
   function colourCell(col, status) {
     if (!status) return;
 
