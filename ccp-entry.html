@@ -205,7 +205,16 @@ const TITLES = {
    RULES
 ========================= */
 
-function turbidity(v){
+function turbidity(v, field){
+
+  // CCP1 Raw Water Turbidity
+  if (field === 'turbidity' && id === 'ccp1') {
+    if (v >= 50) return 'red';
+    if (v > 5) return 'amber';
+    return 'green';
+  }
+
+  // Existing rules for CCP2-4
   if (v >= 1.0) return 'red';
   if (v > 0.5) return 'amber';
   return 'green';
@@ -337,7 +346,7 @@ function ok(field) {
   const fieldConfig = fields.find(f => f.id === field);
   const value = fieldConfig?.type === 'select' ? rawValue : Number(rawValue);
   const baseField = field.replace('_online', '');
-  const status = RULES[baseField] ? RULES[baseField](value) : 'gray';
+  const status = RULES[baseField] ? RULES[baseField](value, field) : 'gray';
 
   if (!data[id]) data[id] = {};
 
