@@ -567,8 +567,11 @@ await exportXLSX();
 localStorage.removeItem('ccpLocked_' + getSite());
 sessionStorage.removeItem('operator');
 
-alert('Final submission complete ✔️');
-location.reload();
+alert('Final submission complete ✔️. Check Downloads folder.');
+
+setTimeout(() => {
+  location.reload();
+}, 5000);
 }
 
 function openCCP(id) {
@@ -1162,7 +1165,7 @@ document.getElementById('location').innerText = '';
 render();
 
 /* =========================
-   EXPORT CSV
+   EXPORT XLSX
 ========================= */
 
 async function exportXLSX() {
