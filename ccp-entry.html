@@ -208,7 +208,10 @@ const TITLES = {
 function turbidity(v, field){
 
   // CCP1 Raw Water Turbidity
-  if (field === 'turbidity' && id === 'ccp1') {
+  if (
+  id === 'ccp1' &&
+  (field === 'turbidity' || field === 'turbidity_online')
+) {
     if (v >= 50) return 'red';
     if (v > 5) return 'amber';
     return 'green';
