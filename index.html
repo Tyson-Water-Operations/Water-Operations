@@ -49,6 +49,22 @@ body {
 .title { font-size: 20px; font-weight: 750; line-height: 1.2; }
 .location { font-size: 16px; font-weight: 700; }
 
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.appLogo{
+  height:40px;
+  width:auto;
+
+  position:relative;
+  top:2px;
+
+  border-radius:8px;
+}
+
 /* =========================
    SITE SELECT
 ========================= */
@@ -332,8 +348,10 @@ body {
 
   <div class="header">
     <div>
-<div class="title">
-  WTP Digital Logsheet
+
+<div class="headerTitle">
+  <img src="Burke_Shire_Council_Logo.png" class="appLogo">
+  <div class="title">WTP Digital Logsheet</div>
 </div>
 
     <div class="dashboardSiteSelect">
